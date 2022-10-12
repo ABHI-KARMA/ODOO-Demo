@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="delivery_boy_acceptance_temp" model="mail.template">
+        <field name="name">Delivery boy acceptance</field>
+        <field name="email_from">{{ctx.get('email_from') or ''}}</field>
+        <field name="subject">Assign : Delivery has assign to you.</field>
+        <field name="email_to">{{ctx.get('email_to')}}</field>
+        <field name="model_id" ref="delivery_boy_knk.model_delivery_control" />
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Dear,
+                    <t t-out="ctx['record'].partner_id.name" />
+                    <br /><br />
+                    A new delivery package <strong>
+                        <t t-out="ctx['record'].name" /></strong>, has assigned to you.
+                    <br />
+                    <br />
+                    <a t-att-href="object.portal_view_url" style="background-color: #875A7B; padding: 8px 16px 8px 16px; text-decoration: none; color: #fff; border-radius: 5px; font-size:13px;">
+                        View Order
+                    </a>
+                    <br />
+                    <br />
+                    Do not hesitate to contact us if you have any questions.
+                    <br /><br />
+                    Best Regards,
+                    <br />
+                    Thank you,
+                    <br />
+                    <t t-out="ctx['record'].user_id.name" />
+                </p>
+            </div>
+        </field>
+    </record>
+</odoo>

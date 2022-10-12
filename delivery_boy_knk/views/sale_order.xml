@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sale_order_delivery" model="ir.ui.view">
+        <field name="name">sale.order.form.inherited</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_button_box')]" position="inside">
+                <button type="object" class="oe_stat_button" icon="fa-globe" name="button_all_delivery_controls">
+                    <div class="o_form_field o_stat_info">
+                        <span class="o_stat_text">Delivery Controls</span>
+                    </div>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

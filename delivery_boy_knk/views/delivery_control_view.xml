@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="delivery_control_form" model="ir.ui.view">
+        <field name="name">delivery.control.form</field>
+        <field name="model">delivery.control</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <div groups="delivery_boy_knk.group_delivery_boy_delivery_control">
+                        <button name="action_accept" string="Accept" type="object" class="oe_highlight" />
+                        <button name="action_reject" string="Reject" type="object" class="oe_highlight" />
+                    </div>
+                        <button name="action_send_to_delivery_boy" string="Send to Delivery Boy" type="object" class="oe_highlight" attrs="{'invisible':[('state','not in',['draft','rejected'])]}"/>
+                        <button name="action_picked" string="Picked" type="object" class="oe_highlight" states="accepted"/>
+                    <field name="state" widget="statusbar" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1 class="oe_title">
+                            <field name="name" readonly="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sale_order_id" readonly="1" />
+                            <field name="stock_picking_id" />
+                            <field name="account_move_id" />
+                            <field name="partner_id" attrs="{'readonly':[('state','=','waiting_for_accept')]}" />
+                            <field name="broadcasted_order" />
+                            <field name="portal_view_url" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="assigned_date" readonly="1" />
+                            <field name="assigned" />
+                            <field name="total_distance" />
+                            <field name="customer_id" />
+                            <field name="company_id" />
+                            <field name="user_id" />
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notes..." />
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" />
+                    <field name="activity_ids" />
+                    <field name="message_ids" />
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="delivery_control_tree" model="ir.ui.view">
+        <field name="name">delivery.control.tree</field>
+        <field name="model">delivery.control</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="sale_order_id" />
+                <field name="stock_picking_id" />
+                <field name="account_move_id" />
+                <field name="partner_id" />
+                <field name="assigned_date" />
+                <field name="total_distance" />
+                <field name="customer_id" />
+                <field name="company_id" />
+                <field name="user_id" readonly="1" />
+            </tree>
+        </field>
+    </record>
+    <record id="view_delivery_control_filter" model="ir.ui.view">
+        <field name="name">delivery.control.search</field>
+        <field name="model">delivery.control</field>
+        <field name="arch" type="xml">
+            <search string="Search Delivery">
+                <field name="name" filter_domain="['|',('name', 'ilike', self)]" />
+                <field name="partner_id" string="Delivery Man" />
+                <field name="customer_id" string="Customer" />
+                <field name="assigned" />
+                <separator />
+                <filter string="Rejected" name="rejected" domain="[('state', '=', 'rejected')]" />
+                <filter string="Broadcasted" name="broadcasted_order" domain="[('broadcasted_order', '=', True)]" />
+                <separator />
+                <group expand="0" name="group_by" string="Group By">
+                    <filter name="partner_id" string="Delivery" context="{'group_by': 'partner_id'}" />
+                    <filter name="customer_id" string="Customer" context="{'group_by': 'customer_id'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="all_delivery_control_action" model="ir.actions.act_window">
+        <field name="name">All Packages</field>
+        <field name="res_model">delivery.control</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_delivery_control_filter" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record found. Let's create one!
+            </p>
+        </field>
+    </record>
+    <record id="rejected_delivery_control_action" model="ir.actions.act_window">
+        <field name="name">Rejected Pickings</field>
+        <field name="res_model">delivery.control</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_delivery_control_filter" />
+        <field name="context" eval="{'search_default_rejected':'rejected'}" />
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Record found. Let's create one!
+            </p>
+        </field>
+    </record>
+</odoo>

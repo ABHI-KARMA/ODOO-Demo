@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="delivery_control_root_menu" name="Delivery Control" groups="delivery_boy_knk.group_manager_delivery_control" />
+    <menuitem id="delivery_control_pickings" parent="delivery_control_root_menu" name="Pickings" sequence="1" />
+    <!-- Pickings -->
+    <menuitem id="delivery_control_all_records" action="all_delivery_control_action" parent="delivery_control_pickings" sequence="10" />
+    <menuitem id="delivery_control_rejected_records" action="rejected_delivery_control_action" parent="delivery_control_pickings" sequence="20" />
+    <!-- Delivery Man -->
+    <menuitem id="delivery_control_delivery_man_menu" action="delivery_man_partner_action" parent="delivery_control_root_menu" sequence="2" />
+</odoo>

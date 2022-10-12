@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_company_inherit_form_view" model="ir.ui.view">
+        <field name="name">res.company.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='general_info']" position="inside">
+                <group string="Geolocation">
+                    <group>
+                        <div class="oe_title">
+                            <button string="Refresh" name="geo_localize" class="oe_highlight" type="object" />
+                        </div>
+                        <div>
+                            <span>Lat : </span>
+                            <field name="company_latitude" nolabel="1" class="oe_inline" />
+                            <br />
+                            <span>Long: </span>
+                            <field name="company_longitude" nolabel="1" class="oe_inline" />
+                            <br />
+                            <span attrs="{'invisible': [('date_localization', '=', False)]}">Updated on: </span>
+                            <field name="date_localization" nolabel="1" class="oe_inline" />
+                        </div>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

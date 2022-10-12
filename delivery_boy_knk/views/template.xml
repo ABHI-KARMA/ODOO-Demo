@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Delivery Boy Portal Views -->
+    <template id="portal_my_home_deliverycontrol" name="Show Delivered Orders" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Delivered Order</t>
+                <t t-set="url" t-value="'/my/successful/delivered_orders'" />
+                <t t-set="placeholder_count" t-value="'delivered_orders'" />
+            </t>
+        </xpath>
+    </template>
+    <template id="portal_my_successful_delivered_record" name="My Issued">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True" />
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Delivered Packages</t>
+            </t>
+            <t t-if="not delivered_records">
+                <p>There are currently no Delivered Records for your account.</p>
+            </t>
+            <t t-if="delivered_records" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Sucessfully Delivered Orders</th>
+                        <th class="text-right">Package</th>
+                        <th class="text-right">Delivered Date</th>
+                        <th class="text-right">Address</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <t t-foreach="delivered_records" t-as="rec">
+                    <tr>
+                        <td class="text-right"><span t-field="rec.name" /></td>
+                        <td class="text-right"><span t-field="rec.delivered_date" /></td>
+                        <td class="text-right"><span t-field="rec.customer_id.street" /></td>
+                        <td class="text-center">
+                            <span class="badge badge-pill badge-secondary">
+                                <t t-esc="rec.state" /></span>
+                        </td>
+                    </tr>
+                </t>
+            </t>
+        </t>
+    </template>
+    <!-- Broadcasted Orders -->
+    <template id="delivery_control_broadcasted_orders" name="Broadcasted Orders">
+        <t t-call="portal.portal_layout">
+            <div class="container">
+                <t t-if="not delivery_brd_orders">
+                    <p>There are currently no Broadcasted orders.</p>
+                </t>
+                <t t-else="">
+                    <div class="col-lg-12 s_title">
+                        <h3>All Broadcasted Orders</h3>
+                    </div>
+                </t>
+                <t t-foreach="delivery_brd_orders" t-as="order">
+                    <div class="row text-center mt-1 mb-0 pt-1 pb-1 mr-auto ml-auto border" style="background:white; width: 100%;">
+                        <div class="col-4 mt-auto mb-auto">
+                            <span>
+                                <t t-esc="order.name" /></span>
+                        </div>
+                        <div class="col-4 mt-auto mb-auto">
+                            <div class="text-left">
+                                <span>
+                                    <t t-esc="order.customer_id.name" /></span><br />
+                                <span>
+                                    <t t-esc="order.customer_id.street" />
+                                    <t t-esc="order.customer_id.street2" />
+                                    <t t-esc="order.customer_id.zip" /><br />
+                                    <t t-esc="order.customer_id.city" />
+                                    <t t-esc="order.customer_id.country_id.name" /></span>
+                            </div>
+                        </div>
+                        <div class="col-4" style="display: flex;align-items: center;justify-content: space-evenly;">
+                            <a role="button" class="btn btn-primary a-submit" t-attf-href="/broadcasted/delivery/{{order.id}}">&amp;nbsp;View Location</a>
+                            <div>
+                                <form action="#" method="post" class="text-center">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                    <input name="order_id" t-att-value="order.id" type="hidden" />
+                                    <a role="button" class="btn btn-primary a-submit" t-attf-href="/delivery/assign/{{order.id}}">&amp;nbsp;Accept to Deliver</a>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+    <!-- View Delivery Order -->
+    <template id="delivery_order_details_form" name="Delivery Order">
+        <t t-call="portal.portal_layout">
+            <t t-set="wrapwrap_classes" t-value="'o_portal_bg_dark'" />
+            <t t-set="o_portal_fullwidth_alert" groups="helpdesk.group_helpdesk_user">
+                <t t-call="portal.portal_back_in_edit_mode">
+                    <t t-set="backend_url" t-value="'/web#model=helpdesk.order_details&amp;id=%s&amp;view_type=form' % (order_details.id)" />
+                </t>
+            </t>
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                    <div class="row no-gutters">
+                        <div class="col-md">
+                            <h5 class="d-flex mb-1 mb-md-0">
+                                <div class="col-9 text-truncate">
+                                    <span t-field="order_details.name" />
+                                    <small class="text-muted "> (#<span t-field="order_details.id" />)</small>
+                                </div>
+                                <div class="col-3 text-right">
+                                    <small class="text-right">Status:</small>
+                                    <span t-field="order_details.state" class=" badge badge-pill badge-info" title="Current stage of this order_details" />
+                                </div>
+                            </h5>
+                        </div>
+                    </div>
+                </t>
+            </t>
+            <div t-if="order_details.customer_id" class="row mr-auto ml-auto mt-1" style="background:white; width:100%;">
+                <div class="col-6">
+                    <h6><strong>Customer Details</strong></h6>
+                    <div>
+                        <div class="col pl-sm-0">
+                            <address t-field="order_details.customer_id" t-options='{"widget": "contact", "fields": ["name", "email", "phone","address"]}' />
+                        </div>
+                    </div>
+                    <h6><strong>Distance</strong></h6>
+                    <div>
+                        <div class="col pl-sm-0">
+                            <t t-esc="'%.2f' % order_details.total_distance" /> Km
+                        </div>
+                    </div>
+                </div>
+             <div class="col-4" style="display: flex; align-items: center; justify-content: space-between;">
+                    <t t-if="order_details.state == 'waiting_for_accept'">
+                        <a role="button" class="btn btn-primary a-submit" t-attf-href="/accept/order/{{order_details.id}}" style="width:135px;">&amp;nbsp;Accept</a>
+                        <br />
+                        <a role="button" class="btn btn-primary a-submit" t-attf-href="/reject/order/{{order_details.id}}" style="width:135px;">&amp;nbsp;Reject</a>
+                    </t>
+                </div>
+            </div>
+            <div class="o_portal_messages_container mt32">
+                <h4>Message and communication history</h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="token" t-value="order_details.access_token" />
+                    <t t-set="object" t-value="order_details" />
+                    <t t-set="pid" t-value="pid" />
+                    <t t-set="hash" t-value="hash" />
+                    <t t-set="disable_composer" t-value="order_details.state" />
+                </t>
+            </div>
+        </t>
+    </template>
+    <!-- My All To Do Delivery Orders -->
+    <template id="delivery_control_to_do_deliveries" name="To Do Delivery Orders">
+        <t t-call="portal.portal_layout">
+            <div class="container">
+                <t t-if="not orders">
+                    <p>There are currently no To Delivery Orders.</p>
+                </t>
+                <t t-else="">
+                    <div class="col-lg-12 s_title">
+                        <h3>To Do Delivery Orders</h3>
+                    </div>
+                </t>
+                <t t-foreach="orders" t-as="order">
+                    <div class="row text-center mt-1 mb-0 pt-1 pb-1 mr-auto ml-auto border" style="background:white; width: 100%;">
+                        <div class="col-4 mt-auto mb-auto">
+                            <span>
+                                <t t-esc="order.name" /></span>
+                        </div>
+                        <div class="col-4 mt-auto mb-auto">
+                            <div class="text-left">
+                                <span>
+                                    <t t-esc="order.customer_id.name" /></span><br />
+                                <span>
+                                    <t t-esc="order.customer_id.street" />
+                                    <t t-esc="order.customer_id.street2" />
+                                    <t t-esc="order.customer_id.zip" /><br />
+                                    <t t-esc="order.customer_id.city" />
+                                    <t t-esc="order.customer_id.country_id.name" /></span>
+                            </div>
+                        </div>
+                        <div class="col-4" style="display: flex;align-items: center;justify-content: space-evenly;">
+                            <a role="button" class="btn btn-primary a-submit" t-attf-href="/broadcasted/delivery/{{order.id}}">&amp;nbsp;View Order</a>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+    <template id="delivery_order_acceptance_template" name="Acceptance Order">
+        <t t-call="portal.portal_layout">
+            <t t-set="wrapwrap_classes" t-value="'o_portal_bg_dark'" />
+            <t t-call="portal.portal_record_layout">
+                <t t-set="card_header">
+                    <div class="row no-gutters">
+                        <div class="col-md">
+                            <h5 class="d-flex mb-1 mb-md-0">
+                                <div class="col-9 text-truncate">
+                                    <span t-field="record.name" />
+                                    <small class="text-muted "> (#<span t-field="record.id" />)</small>
+                                </div>
+                                <div class="col-3 text-right">
+                                    <small class="text-right">Status:</small>
+                                    <span t-field="record.state" class=" badge badge-pill badge-info" title="Current stage of this record" />
+                                </div>
+                            </h5>
+                        </div>
+                    </div>
+                </t>
+            </t>
+            <div class="row mr-auto ml-auto mt-1" style="background:white; width:100%;">
+                <div class="col-8">
+                    <div>
+                        <div class="col pl-sm-0">
+                            <address t-field="record.customer_id" t-options='{"widget": "contact", "fields": ["name", "phone","address"]}' />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4" style="display: flex; align-items: center; justify-content: space-between;">
+                    <t t-if="record.state == 'waiting_for_accept'">
+                        <a role="button" class="btn btn-primary a-submit" t-attf-href="/accept/order/{{record.id}}" style="width:135px;">&amp;nbsp;Accept</a>
+                        <br />
+                        <a role="button" class="btn btn-primary a-submit" t-attf-href="/reject/order/{{record.id}}" style="width:135px;">&amp;nbsp;Reject</a>
+                    </t>
+                </div>
+            </div>
+            <div class="o_portal_messages_container mt32">
+                <h4>Message and communication history</h4>
+                <t t-call="portal.message_thread">
+                    <t t-set="token" t-value="record.access_token" />
+                    <t t-set="object" t-value="record" />
+                    <t t-set="pid" t-value="pid" />
+                    <t t-set="hash" t-value="hash" />
+                    <t t-set="disable_composer" t-value="record.state" />
+                </t>
+            </div>
+        </t>
+    </template>
+    <!-- Menus -->
+    <record id="to_do_delivery_page" model="website.page">
+        <field name="url">/todo/delivery/orders</field>
+        <field name="is_published">True</field>
+        <field name="view_id" ref="delivery_boy_knk.delivery_control_to_do_deliveries" />
+        <field name="cache_time">0</field>
+        <field name="track">True</field>
+    </record>
+    <record id="to_do_delivery_menu" model="website.menu">
+        <field name="name">My Jobs</field>
+        <field name="url">/todo/delivery/orders</field>
+        <field name="page_id" ref="delivery_boy_knk.to_do_delivery_page" />
+        <field name="parent_id" ref="website.main_menu" />
+        <field name="sequence" type="int">20</field>
+    </record>
+    <record id="broadcasted_delivery_page" model="website.page">
+        <field name="url">/broadcasted/delivery/orders</field>
+        <field name="is_published">True</field>
+        <field name="view_id" ref="delivery_boy_knk.delivery_control_to_do_deliveries" />
+        <field name="cache_time">0</field>
+        <field name="track">True</field>
+    </record>
+    <record id="broadcasted_delivery_menu" model="website.menu">
+        <field name="name">Broadcasted Orders</field>
+        <field name="url">/broadcasted/delivery/orders</field>
+        <field name="page_id" ref="delivery_boy_knk.broadcasted_delivery_page" />
+        <field name="parent_id" ref="website.main_menu" />
+        <field name="sequence" type="int">20</field>
+    </record>
+</odoo>

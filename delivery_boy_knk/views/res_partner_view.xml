@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_partner_inerited" model="ir.ui.view">
+        <field name="name">res.partner.form.inherited</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="is_delivery_boy" />
+                <field name="active_state" invisible="1" />
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" type="object" name="switch_to_online" string="Online" attrs="{'invisible':['|',('active_state','=','online'),('is_delivery_boy','=',False)]}" />
+                <button class="oe_stat_button" type="object" name="switch_to_offline" string="Offline" attrs="{'invisible':['|',('active_state','=','offline'),('is_delivery_boy','=',False)]}" />
+            </xpath>
+        </field>
+    </record>
+    <record id="res_partner_search_view_inherited" model="ir.ui.view">
+        <field name="name">res.partner.search.view</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter" />
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='type_person']" position="after">
+                <filter string="Delivery Man" name="is_delivery_boy" domain="[('is_delivery_boy','=',True)]" />
+            </xpath>
+        </field>
+    </record>
+    <record id="delivery_man_partner_action" model="ir.actions.act_window">
+        <field name="name">Delivery Man</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,tree,form,search</field>
+        <field name="context" eval="{'search_default_is_delivery_boy':True}" />
+    </record>
+    <record id="res_partner_kanban_view_inerited" model="ir.ui.view">
+        <field name="name">res.partner.kanban.inherited</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='type']" position="after">
+                <!-- <field name="is_delivery_boy" invisible="1"/> -->
+                <field name="active_state" colors='{"online": "success", "offline": "danger"}' />
+            </xpath>
+            <xpath expr="//div[hasclass('o_row')]" position="after">
+                <div class="oe_kanban_bottom_right" t-if="!selection_mode">
+                    <field name="active_state" widget="state_selection" />
+                    <!--  <field name="active_state" widget="state_selection" options="{'online': 'success', 'offline': 'danger'}}"/> -->
+                </div>
+            </xpath>
+        </field>
+    </record>
+  <!--   <record id="view_users_form_form_view_inherited" model="ir.ui.view">
+        <field name="name">res.users.form.view</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('oe_title')]" position="after">
+                <label for="is_delivery_boy" />
+                <field name="is_delivery_boy" />
+            </xpath>
+        </field>
+    </record> -->
+</odoo>

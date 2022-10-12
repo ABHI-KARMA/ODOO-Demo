@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+
+access_delivery_control_id,access_delivery_control_name,model_delivery_control,,1,1,1,1
+
