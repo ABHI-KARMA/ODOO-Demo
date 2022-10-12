@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="library_membership_form" model="ir.ui.view">
+        <field name="name">Library Membership Form</field>
+        <field name="model">library.membership</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="create_invoice_bool" invisible="1" />
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done,exp" />
+                    <button name="action_confirm" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible':['|','|',('paid_membership','=',True),('create_invoice_bool','=',True),('state','!=','draft')]}" />
+                    <button name="action_cancel" string="Cancel" type="object" states="done" class="oe_highlight" />
+                    <button name="action_create_invoice" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible':['|',('paid_membership','=',False),('create_invoice_bool','=',True)]}" />
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" name="invoice_button" string="Invoice" type="object" icon="fa-edit" attrs="{'invisible':[('create_invoice_bool','=',False)]}" />
+                        <button class="oe_stat_button" name="get_book_issue_records" string="Issued Records" type="object" icon="fa-edit">
+                            <span style="margin-left:-30px;">
+                                <field name="issued_record_count" /></span>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" />
+                            <field name="phone_number" />
+                            <field name="email_address" />
+                            <field name="paid_membership" invisible="1" />
+                            <field name="membership_price" attrs="{'invisible':[('paid_membership','=',False)]}" />
+                        </group>
+                        <group>
+                            <field name="company_id" invisible="1" />
+                            <field name="membership_type" />
+                            <field name="start_date" />
+                            <field name="end_date" />
+                            <field name="products" attrs="{'invisible':[('paid_membership','=',False)]}" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="library_membership_tree" model="ir.ui.view">
+        <field name="name">Library Membership Tree</field>
+        <field name="model">library.membership</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="membership_type" string="Membership" />
+                <field name="start_date" />
+                <field name="end_date" />
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-info="state == 'draft'" decoration-warning="state == 'cancel'" />
+            </tree>
+        </field>
+    </record>
+    <!-- Search view -->
+    <record id="library_membership_search" model="ir.ui.view">
+        <field name="name">library.membership.search</field>
+        <field name="model">library.membership</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="partner_id" />
+                <filter string="member" name="partner_id" context="{'group_by':'partner_id'}" />
+                <filter string="membership" name="membership_type" context="{'group_by':'membership_type'}" />
+                <filter string="Issue Date" name="start_date" date="create_date" />
+            </search>
+        </field>
+    </record>
+    <!-- Kanban view  -->
+    <record id="library_membership_kanban" model="ir.ui.view">
+        <field name="name">library.membership.kanban</field>
+        <field name="model">library.membership</field>
+        <field name="arch" type="xml">
+            <kanban class="o_hr_employee_kanban">
+                <field name="name" />
+                <field name='name' />
+                <field name='partner_id' />
+                <field name='id' />
+                <field name="membership_type" />
+                <field name="start_date" />
+                <field name="end_date" />
+                <field name="state" widget="badge" decoration-success="state == 'done'" decoration-bf="state == 'draft'" decoration-danger="state == 'cancel'" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details" style="display:flex; justify-content:space-between;">
+                                <div>
+                                    <div><strong>Member: </strong><span>
+                                            <field name="partner_id" /></span></div>
+                                    <div class="o_kanban_record_title">
+                                        <strong>Membership: </strong>
+                                        <field name="membership_type" />
+                                    </div>
+                                    <div><strong>Membership Start Date: </strong>
+                                        <field name="start_date" />
+                                    </div>
+                                </div>
+                                    <div >
+                                        <field name="state" widget="label_selection" options="{'classes': {'draft': 'default', 'done': 'success','cancel':'warning','expired':'danger'}}"/>
+                                    </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <!-- Calendar view -->
+    <record id="library_membership_calendar" model="ir.ui.view">
+        <field name="name">library.membership.calendar</field>
+        <field name="model">library.membership</field>
+        <field name="arch" type="xml">
+            <calendar string="Book Issue" date_start="start_date" date_stop="end_date" event_open_popup="true" mode="year" quick_add="False">
+                <field name="name" />
+            </calendar>
+        </field>
+    </record>
+    <!-- Pivot view -->
+    <record id="library_membership_pivot" model="ir.ui.view">
+        <field name="name">library.membership.pivot</field>
+        <field name="model">library.membership</field>
+        <field name="arch" type="xml">
+            <pivot string="Pivot View">
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="membership_type" />
+                <field name="start_date" />
+                <field name="end_date" />
+            </pivot>
+        </field>
+    </record>
+    <record id="library_membership_action" model="ir.actions.act_window">
+        <field name="name">Membership</field>
+        <field name="res_model">library.membership</field>
+        <field name="view_mode">kanban,tree,pivot,calendar,form,search</field>
+    </record>
+    <record id="knk_view_membership_filter" model="ir.ui.view">
+        <field name="name">knk.library.membership</field>
+        <field name="model">library.membership</field>
+        <field name="arch" type="xml">
+            <search string="Membership">
+                <field name="name" filter_domain="[('name', 'ilike', self)]" />
+                <field name="partner_id" />
+                <separator />
+                <separator />
+                <group expand="0" string="Group By" colspan="10" col="8">
+                    <filter string="Students" name="student" domain="[]" context="{'group_by':'partner_id'}" />
+                    <filter string="Membership" name="membership_type" domain="[]" context="{'group_by':'membership_type'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="knk_account_move_form" model="ir.ui.view">
+        <field name="name">knk.account.move.form</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_reference']" position="after">
+                <field name="membership_id" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

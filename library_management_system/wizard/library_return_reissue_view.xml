@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="return_form" model="ir.ui.view">
+        <field name="name">Return Form</field>
+        <field name="model">return.book</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="book_lines" nolabel="1">
+                            <tree create="0" editable="bottom">
+                                <field name="product_id" readonly="1" />
+                                <field name="quantity" readonly="1" />
+                                <field name="exceed_amount" readonly="1" sum="Total" />
+                                <field name="return_today" />
+                            </tree>
+                        </field>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="current_date" />
+                            <field name="due_date_amount" />
+                        </group>
+                        <group>
+                            <field name="company_id" />
+                            <field name="picking_type_id" />
+                            <field name="journal_id" attrs="{'invisible':[('due_date_amount','=',0.0)]}" />
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_confirm" string="Confirm" class="oe_highlight" type="object" />
+                        <button special="cancel" string="Cancel" />
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="reissue_form" model="ir.ui.view">
+        <field name="name">Reissue Form</field>
+        <field name="model">reissue.book</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="book_lines">
+                        <tree create="0" editable="bottom">
+                            <field name="product_id" />
+                            <field name="quantity" />
+                            <field name="reissue_today" />
+                        </tree>
+                    </field>
+                    <footer>
+                        <button name="action_confirm" string="Confirm" class="oe_highlight" type="object" />
+                        <button special="cancel" string="Cancel" />
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

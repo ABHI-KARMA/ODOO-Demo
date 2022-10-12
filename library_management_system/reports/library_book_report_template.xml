@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="report_action_sale" model="ir.actions.report">
+        <field name="name">Book Issue report</field>
+        <field name="model">book.issue.report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">library_management_system.report_book_template</field>
+        <field name="report_file">library_management_system.report_book_template</field>
+        <field name="binding_model_id" ref="model_book_issue_report" />
+        <field name="binding_type">report</field>
+    </record>
+    <template id="report_book_template">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-if="doc.book_ids">
+                        <t t-foreach="doc.book_ids" t-as="book_id">
+                            <br></br>
+                            <div class="text-center">
+                                <h4 style="font-weight: bold;"> Book Issue History </h4>
+                            </div>
+                            <br />
+                            <t t-value="doc.env['book.issue.line'].sudo().search([('product_id', '=',book_id.id),('issue_date','&gt;=',doc.date_from),('issue_date','&lt;=',doc.date_to)])" t-set="lines" />
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr style="text-align:center;">
+                                        <th>Book Name</th>
+                                        <th>Date From</th>
+                                        <th>Date To</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="text-align:center;">
+                                        <td><span t-esc="book_id.name" /></td>
+                                        <td><span t-esc="doc.date_from" /></td>
+                                        <td><span t-esc="doc.date_to" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-sm table-bordered" style="border: 2px black solid;">
+                                <thead style="border: 2px black solid;">
+                                    <tr style="border: 2px black solid;">
+                                        <th style="border: 2px black solid; text-align: center;"><strong>Name</strong></th>
+                                        <th style="border: 2px black solid; text-align: center;"><strong>Issue Date</strong></th>
+                                        <th style="border: 2px black solid; text-align: center;"><strong>Member Name</strong></th>
+                                        <th style="border: 2px black solid; text-align: center;"><strong>Status</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody style="border: 2px black solid;">
+                                    <tr t-foreach="lines.issue_id" t-as="line">
+                                        <td style="border: 2px black solid; text-align:center;">
+                                            <span t-esc="line.name" />
+                                        </td>
+                                        <td style="border: 2px black solid; text-align:center;">
+                                            <span t-esc="line.issue_date" />
+                                        </td>
+                                        <td style="border: 2px black solid; text-align:center;">
+                                            <span t-esc="line.partner_id.name" />
+                                        </td>
+                                        <td style="border: 2px black solid; text-align:center;">
+                                            <span t-esc="line.state" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p style="page-break-before:always;"></p>
+                        </t>
+                    </t>
+                    <t t-else="">
+                        <t t-foreach="doc.env['product.template'].sudo().search([('is_book','=',True)])" t-as="book">
+                            <br></br>
+                            <div class="text-center">
+                                <h4 style="font-weight: bold;"> Book Issue History </h4>
+                            </div>
+                            <br />
+                            <t t-value="doc.env['book.issue.line'].sudo().search([('product_id', '=',book.id),('issue_date','&gt;=',doc.date_from),('issue_date','&lt;=',doc.date_to)])" t-set="lines" />
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr style="text-align:center;">
+                                        <th>Book Name</th>
+                                        <th>Date From</th>
+                                        <th>Date To</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="text-align:center;">
+                                        <td><span t-esc="book.name" /></td>
+                                        <td><span t-esc="doc.date_from" /></td>
+                                        <td><span t-esc="doc.date_to" /></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-sm table-bordered" style="border: 2px black solid;">
+                                <thead style="border: 2px black solid;">
+                                    <tr style="border: 2px black solid;">
+                                        <th style="border: 2px black solid; text-align: center;"><strong>Name</strong></th>
+                                        <th style="border: 2px black solid; text-align: center;"><strong>Issue Date</strong></th>
+                                        <th style="border: 2px black solid; text-align: center;"><strong>Member Name</strong></th>
+                                        <th style="border: 2px black solid; text-align: center;"><strong>Status</strong></th>
+                                    </tr>
+                                </thead>
+                                <tbody style="border: 2px black solid;">
+                                    <tr t-foreach="lines.issue_id" t-as="line">
+                                        <td style="border: 2px black solid; text-align:center;">
+                                            <span t-esc="line.name" />
+                                        </td>
+                                        <td style="border: 2px black solid; text-align:center;">
+                                            <span t-esc="line.issue_date" />
+                                        </td>
+                                        <td style="border: 2px black solid; text-align:center;">
+                                            <span t-esc="line.partner_id.name" />
+                                        </td>
+                                        <td style="border: 2px black solid; text-align:center;">
+                                            <span t-esc="line.state" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p style="page-break-before:always;"></p>
+                        </t>
+                    </t>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

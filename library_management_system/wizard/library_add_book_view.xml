@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="library_add_book_form_view" model="ir.ui.view">
+        <field name="name">Creating Books</field>
+        <field name="model">library.add.book.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="isbn" string="ISBN-13" />
+                            <field name="is_valid_book" invisible="1" />
+                        </group>
+                    </group>
+                    <group attrs="{'invisible':[('is_valid_book','=',False)]}">
+                        <group>
+                            <separator string="Book Details" />
+                            <field name="book_title" readonly="1" />
+                            <field name="author_ids" widget="many2many_tags" readonly="1" />
+                            <field name="due_date_exceed_amount" />
+                        </group>
+                        <group>
+                            <field name="publisher_id" readonly="1" />
+                            <field name="year" readonly="1" />
+                            <field name="return_days" />
+                        </group>
+                        <field name="description" placeholder="Description...." />
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="add_book" type="object" string="Add" class="oe_highlight" attrs="{'invisible':[('is_valid_book','=',False)]}" />
+                    <button string="Cancel" class="btn-secondary" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="library_add_book_action" model="ir.actions.act_window">
+        <field name="name">Add Books</field>
+        <field name="res_model">library.add.book.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

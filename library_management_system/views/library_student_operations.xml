@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_library" name="Show Reservations / Requests / Issued" customize_show="True" inherit_id="portal.portal_my_home" priority="20">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Book Requests</t>
+                <t t-set="url" t-value="'/my/requests'" />
+                <t t-set="placeholder_count" t-value="'request_count'" />
+            </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Book Reservations</t>
+                <t t-set="url" t-value="'/my/reservations'" />
+                <t t-set="placeholder_count" t-value="'reservation_count'" />
+            </t>
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="title">Book Issue Records</t>
+                <t t-set="url" t-value="'/my/issued'" />
+                <t t-set="placeholder_count" t-value="'issue_count'" />
+            </t>
+        </xpath>
+    </template>
+    <template id="portal_my_requests" name="My Requests">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True" />
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Requests</t>
+            </t>
+            <t t-if="not requests">
+                <p>There are currently no requests for your account.</p>
+            </t>
+            <t t-if="requests" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Requests</th>
+                        <th class="text-right">Request Date</th>
+                        <th class="text-right">Book Name</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <t t-foreach="requests" t-as="request">
+                    <tr>
+                        <td>
+                            <t t-esc="request.name" />
+                        </td>
+                        <td class="text-right"><span t-field="request.date" /></td>
+                        <td class="text-right"><span t-field="request.product_id" /></td>
+                        <td class="text-center">
+                            <span class="badge badge-pill badge-secondary">
+                                <t t-if="request.state == 'sent'">
+                                    <span>Sent</span>
+                                </t>
+                                <t t-if="request.state == 'confirm'">
+                                    <span>Sent</span>
+                                </t>
+                                <t t-if="request.state == 'approved'">
+                                    <span>Approved</span>
+                                </t>
+                                <t t-if="request.state == 'done'">
+                                    <span>Done</span>
+                                </t>
+                                <t t-if="request.state == 'rejected'">
+                                    <span>Rejected</span>
+                                </t>
+                            </span>
+                        </td>
+                    </tr>
+                </t>
+            </t>
+        </t>
+    </template>
+    <template id="portal_my_reservations" name="My Reservations">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True" />
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Reservations</t>
+            </t>
+            <t t-if="not reservations">
+                <p>There are currently no Reservations for your account.</p>
+            </t>
+            <t t-if="reservations" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Reservations</th>
+                        <th class="text-right">Reservation Date</th>
+                        <th class="text-right">Book Name</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <t t-foreach="reservations" t-as="reservation">
+                    <tr>
+                        <td>
+                            <t t-esc="reservation.name" />
+                        </td>
+                        <td class="text-right"><span t-field="reservation.date" /></td>
+                        <td class="text-right"><span t-field="reservation.book_ids[0].product_id" /></td>
+                        <td class="text-center">
+                            <span class="badge badge-pill badge-secondary">
+                                <t t-if="reservation.state == 'sent'">
+                                    <span>Sent</span>
+                                </t>
+                                <t t-if="reservation.state == 'confirm'">
+                                    <span>Sent</span>
+                                </t>
+                                <t t-if="reservation.state == 'issued'">
+                                    <span>Issued</span>
+                                </t>
+                            </span>
+                        </td>
+                    </tr>
+                </t>
+            </t>
+        </t>
+    </template>
+    <template id="portal_my_issued_records" name="My Issued">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True" />
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Issued Records</t>
+            </t>
+            <t t-if="not issued_records">
+                <p>There are currently no Issued Records for your account.</p>
+            </t>
+            <t t-if="issued_records" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th>Book Issue</th>
+                        <th class="text-right">Issue Date</th>
+                        <th class="text-right">Books</th>
+                        <th class="text-center">Status</th>
+                    </tr>
+                </thead>
+                <t t-foreach="issued_records" t-as="rec">
+                    <tr>
+                        <td>
+                            <t t-esc="rec.name" />
+                        </td>
+                        <td class="text-right"><span t-field="rec.issue_date" /></td>
+                        <td class="text-right">
+                            <t t-foreach="rec.book_line_ids" t-as="book">
+                                <span>
+                                    <t t-esc="book.product_id.name" /></span><br />
+                            </t>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge badge-pill badge-secondary">
+                                <t t-esc="rec.state" /></span>
+                        </td>
+                    </tr>
+                </t>
+            </t>
+        </t>
+    </template>
+    <template id="library_management_system_reservation_book">
+        <t t-call="website.layout">
+            <div style="display:flex; width:100%; height:300px; justify-content:center; align-items:center;">
+                <h1 style="text-align: center;">Thanks for your Reservation<br /> Your Reservation Number is :
+                    <t t-esc="record.name" />
+                </h1>
+            </div>
+        </t>
+    </template>
+    <template id="library_management_system_request_book">
+        <t t-call="website.layout">
+            <div style="display:flex; width:100%; height:300px; justify-content:center; align-items:center;">
+                <h1 style="text-align: center;">Thanks for your Request<br /> Your Request Number is :
+                    <t t-esc="record.name" />
+                </h1>
+            </div>
+        </t>
+    </template>
+</odoo>

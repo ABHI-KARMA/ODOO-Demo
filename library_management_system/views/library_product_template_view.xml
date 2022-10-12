@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_template_inherit_form_view" model="ir.ui.view">
+        <field name="name">product template</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='options']//span[2]" position="after">
+                <span class="d-inline-block">
+                    <field name="is_book" />
+                    <label for="is_book" />
+                </span>
+                <div invisible="1">
+                    <field name="is_membership_product" />
+                    <label for="is_membership_product" />
+                </div>
+            </xpath>
+            <xpath expr="//notebook//page[@name='general_information']" position="after">
+                <page string="Book Details" attrs="{'invisible':[('is_book','=',False)]}" autofocus='autofocus'>
+                    <group>
+                        <group>
+                            <separator string="Basic Information" />
+                            <field name="book_title" />
+                            <field name="book_summary" />
+                            <field name="author_ids" widget="many2many_tags" />
+                            <field name="page_number" />
+                            <field name="available_language_ids" widget="many2many_tags" />
+                        </group>
+                        <group>
+                            <field name="return_days" required="1" />
+                            <field name="isbn_13" />
+                            <field name="publisher_info" />
+                            <field name="copyright_owner" />
+                            <field name="category_ids" widget="many2many_tags" />
+                            <field name="due_exceed_amount" required="1" />
+                        </group>
+                    </group>
+                    <separator string="Issued History" />
+                    <group>
+                        <field name="issued_lines" nolabel="1">
+                            <tree create="0">
+                                <field name="issue_id" />
+                                <field name="partner_id" />
+                                <field name="user_id" />
+                                <field name="issued_quantity" />
+                                <field name="issued_date" />
+                                <field name="return_date" />
+                                <field name="status" />
+                            </tree>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    <record id="library_product_template_search_view_inherit" model="ir.ui.view">
+        <field name="name">product.template.search.inherited</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='consumable']" position="after">
+                <filter string="Books" name="filter_to_book" domain="[('is_book','=',True)]" />
+            </xpath>
+        </field>
+    </record>
+    
+    <record id="product.product_template_action" model="ir.actions.act_window">
+        <field name="name">Products</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">kanban,tree,form,activity</field>
+        <field name="context" eval="{'search_default_filter_to_book':1, 'default_is_book': True,'default_detailed_type':'product'}" />
+    </record>
+</odoo>

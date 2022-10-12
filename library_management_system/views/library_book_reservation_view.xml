@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="book_reservation_form" model="ir.ui.view">
+        <field name="name">library.book.reservation.form</field>
+        <field name="model">book.reservation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_done" string="Issue" type="object" class="oe_highlight" groups="library_management_system.group_library_librarian" states='sent' />
+                    <field name="state" widget="statusbar" statusbar_visible='sent,issued' />
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="partner_id" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="membership_id" />
+                            <field name="membership_exp_date" />
+                            <field name="picking" invisible="1" />
+                        </group>
+                        <group>
+                            <field name="date" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="user_id" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="company_id" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="picking_type_id" states='sent' />
+                            <field name="issue_id" attrs="{'invisible':[('state','!=','issued')]}" />
+                        </group>
+                    </group>
+                    <field name="book_ids" attrs="{'readonly':[('state','!=','sent')]}">
+                        <tree editable="bottom">
+                            <field name="product_id" />
+                            <field name="book_title" />
+                            <field name="available_quantity" />
+                            <field name="author_ids" />
+                            <field name="isbn_13" />
+                            <field name="quantity" />
+                            <field name="state" />
+                            <field name="user_id" invisible="1" />
+                        </tree>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Search view -->
+    <record id="book_reservation_search" model="ir.ui.view">
+        <field name="name">book.reservation.search</field>
+        <field name="model">book.reservation</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="user_id" />
+                <filter string="member" name="partner_id" context="{'group_by':'partner_id'}" />
+                <filter string="membership" name="membership_id" context="{'group_by':'membership_id'}" />
+                <filter string="Issue Date" name="issue_date" date="create_date" />
+                <filter string="Status" name="state" context="{'group_by':'state'}" />
+            </search>
+        </field>
+    </record>
+    <!-- Kanban view  -->
+    <record id="book_reservation_kanban" model="ir.ui.view">
+        <field name="name">book.reservation.kanban</field>
+        <field name="model">book.reservation</field>
+        <field name="arch" type="xml">
+            <kanban class="o_hr_employee_kanban">
+                <field name="name" />
+                <field name='name' />
+                <field name='partner_id' />
+                <field name='id' />
+                <field name="membership_exp_date" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details" style="display:flex; justify-content:space-between;">
+                                <div>
+                                    <h1 class="o_kanban_record_title">
+                                        <field name="name" />
+                                    </h1>
+                                    <div><strong>Member: </strong><span>
+                                            <field name="partner_id" /></span></div>
+                                    <div><strong>Membership: </strong> <span>
+                                            <field name="membership_id" /></span></div>
+                                    <div><strong>Membership End Date:</strong>
+                                        <field name="membership_exp_date" />
+                                    </div>
+                                </div>
+                                    <div>
+                                        <field name="state" widget="label_selection" options="{'classes': {'draft': 'default', 'issued': 'success','reissued':'info','return':'warning','cancel':'danger'}}"/>
+                                    </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <!-- Calendar view -->
+    <record id="book_reservation_calendar" model="ir.ui.view">
+        <field name="name">book.reservation.calendar</field>
+        <field name="model">book.reservation</field>
+        <field name="arch" type="xml">
+            <calendar string="Book Reservation" date_start="date" date_stop="membership_exp_date" event_open_popup="true" mode="month" quick_add="False">
+                <field name="name" />
+            </calendar>
+        </field>
+    </record>
+    <!-- Pivot view -->
+    <record id="book_reservation_pivot" model="ir.ui.view">
+        <field name="name">book.reservation.pivot</field>
+        <field name="model">book.reservation</field>
+        <field name="arch" type="xml">
+            <pivot string="Pivot View">
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="membership_id" />
+                <field name="date" />
+                <field name="membership_exp_date" />
+            </pivot>
+        </field>
+    </record>
+    <record id="book_reservation_tree" model="ir.ui.view">
+        <field name="name">library.book.reservation.tree</field>
+        <field name="model">book.reservation</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="user_id" />
+                <field name="date" />
+                <!-- <field name="state"/> -->
+            </tree>
+        </field>
+    </record>
+    <record id="book_reservation_action" model="ir.actions.act_window">
+        <field name="name">Reservations</field>
+        <field name="res_model">book.reservation</field>
+        <field name="view_mode">kanban,tree,pivot,calendar,form,search</field>
+    </record>
+</odoo>

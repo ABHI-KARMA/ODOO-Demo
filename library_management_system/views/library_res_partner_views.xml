@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="library_res_partner_form" model="ir.ui.view">
+        <field name="name">Library Res Partner</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="is_member" invisible="1" />
+                <field name="membership" attrs="{'invisible':[('is_member','=',False)]}" />
+                <field name="membership_exp_date" attrs="{'invisible':[('is_member','=',False)]}" />
+            </xpath>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="knk_membership_members_tree">
+        <field name="name">Members</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <tree string="Members">
+                <field name="name" />
+                <field name="membership" />
+                <field name="membership_exp_date" />
+                <field name="user_id" invisible="1" />
+                <field name="company_id" groups="base.group_multi_company" />
+            </tree>
+        </field>
+    </record>
+    <!-- Pivot View -->
+    <record id="knk_membership_members_pivot" model="ir.ui.view">
+        <field name="name">membership.pivot</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <pivot string="Pivot View">
+                <field name="name" />
+                <field name="membership" />
+                <field name="membership_exp_date" />
+                <field name="user_id" invisible="1" />
+                <field name="company_id" groups="base.group_multi_company" />
+            </pivot>
+        </field>
+    </record>
+    <record id="knk_view_res_partner_member_filter" model="ir.ui.view">
+        <field name="name">knk.res.partner.select</field>
+        <field name="model">res.partner</field>
+        <field name="priority">60</field>
+        <field name="arch" type="xml">
+            <search string="Membership Partners">
+                <field name="name" filter_domain="['|', '|', ('name', 'ilike', self)]" />
+                <field name="membership" />
+                <field name="membership_exp_date" string="End Membership Date" />
+                <separator />
+                <filter name="all_members" string="Members" domain="[('is_member', '=',True)]" />
+                <separator />
+                <group expand="0" string="Group By" colspan="10" col="8">
+                    <filter string="Membership" name="membership" domain="[]" context="{'group_by': 'is_member'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+    <!-- <record model="ir.actions.act_window" id="action_membership_members">
+        <field name="name">Members</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,tree,pivot,form,activity</field>
+        <field name="search_view_id" ref="knk_view_res_partner_member_filter" />
+        <field name="context">{"search_default_all_members": 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new member
+            </p>
+            <p>
+                Odoo helps you easily track all activities related to a member:
+                Current Membership Status, Discussions and History of Membership, etc.
+            </p>
+        </field>
+    </record> -->
+    <!-- <record model="ir.actions.act_window.view" id="action_membership_members_view_tree">
+        <field name="sequence" eval="2" />
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="knk_membership_members_tree" />
+        <field name="act_window_id" ref="action_membership_members" />
+    </record> -->
+</odoo>

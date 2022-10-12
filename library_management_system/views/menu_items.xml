@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="library_root_menu" name="Library Management" />
+    <menuitem action="product.product_template_action" id="menu_product_template_knk" parent="library_root_menu" sequence="1" />
+    <menuitem id="operations_menu" parent="library_management_system.library_root_menu" name="Operations" sequence="1" />
+    <menuitem id="membership_menu" name="Membership" parent="library_management_system.library_root_menu" sequence="3" />
+    <menuitem id="membership_form_menu" action="library_membership_action" parent="membership_menu" name="Membership" sequence="1" />
+    <menuitem id="menu_book_reporting" name="Reporting" parent="library_management_system.library_root_menu" sequence="2" />
+    <menuitem id="submenu_book_reporting" name="Book Reporting" action="book_issue_report_action" parent="menu_book_reporting" sequence="1" />
+    <menuitem action="book_issue_action" id="book_issue_submenu" parent="operations_menu" sequence="2" groups="library_management_system.group_library_librarian" />
+    <menuitem action="book_request_action" id="book_request_submenu" parent="operations_menu" sequence="3" />
+    <menuitem id="reservation_menu" parent="operations_menu" action="book_reservation_action" name="Reservation" sequence="4" />
+    <menuitem id="configuration_menu" parent="library_management_system.library_root_menu" name="Configuration" sequence="3" />
+    <menuitem id="menu_library_config" name="Settings" action="action_library_config" parent="configuration_menu" sequence="0" />
+    <menuitem id="reporting_menu" parent="library_management_system.library_root_menu" name="Reporting" sequence="4" />
+    <menuitem id="submenu_membership_report" parent="configuration_menu" action="library_management_system.library_add_book_action" name="Add Books" groups="library_management_system.group_library_librarian" />
+    <menuitem id="library_author_submenu" name="Authors" action="book_author_action" parent="configuration_menu" />
+    <menuitem id="book_category_submenu" action="book_category_action" parent="configuration_menu" />
+    <menuitem id="book_publisher_submenu" action="book_publisher_action" parent="configuration_menu" />
+</odoo>

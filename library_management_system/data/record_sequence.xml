@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="seq_membership" model="ir.sequence">
+            <field name="name">Membership</field>
+            <field name="code">library.membership</field>
+            <field name="prefix">MEMBER0</field>
+            <field name="padding">0001</field>
+            <field name="company_id" eval="False" />
+        </record>
+        <record id="seq_issue_book" model="ir.sequence">
+            <field name="name">Book Issue</field>
+            <field name="code">book.issue</field>
+            <field name="prefix">REG</field>
+            <field name="padding">0001</field>
+            <field name="company_id" eval="False" />
+        </record>
+        <record id="seq_request_book" model="ir.sequence">
+            <field name="name">Book Request</field>
+            <field name="code">book.request</field>
+            <field name="prefix">REQ/</field>
+            <field name="padding">0001</field>
+            <field name="company_id" eval="False" />
+        </record>
+        <record id="seq_reservation_book" model="ir.sequence">
+            <field name="name">Book Reservation</field>
+            <field name="code">book.reservation</field>
+            <field name="prefix">RES/</field>
+            <field name="padding">0001</field>
+            <field name="company_id" eval="False" />
+        </record>
+    </data>
+</odoo>

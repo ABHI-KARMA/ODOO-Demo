@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="mail_librarian" model="mail.activity.type">
+            <field name="name">Book Reservation Created</field>
+            <field name="icon">fa-sun-o</field>
+            <field name="res_model_id" ref="library_management_system.model_book_reservation" />
+        </record>
+    </data>
+</odoo>

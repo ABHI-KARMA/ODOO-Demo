@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="knk_library_membership_product" model="product.product">
+            <field name="name">Membership</field>
+            <field name="is_membership_product">True</field>
+            <field name="list_price">200</field>
+        </record>
+    </data>
+</odoo>

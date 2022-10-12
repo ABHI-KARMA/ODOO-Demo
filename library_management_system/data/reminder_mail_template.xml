@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Email Template for Return Date Reminder -->
+    <record id="email_template_for_return_date_reminder" model="mail.template">
+        <field name="name">Return Date Reminder</field>
+        <field name="email_from">{{ctx.get('email_from') or ''}}</field>
+        <field name="subject">Reminder: Book return date is near.</field>
+        <field name="email_to">{{ctx.get('email_to')}}</field>
+        <field name="model_id" ref="library_management_system.model_book_issue" />
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Dear,<t t-out="ctx['record'].issue_id.partner_id.name"/>
+                    <br /><br />
+                    Return Date of below book is <strong><t t-out="ctx['record'].return_date"/></strong>, Please return it on time
+                    <ul>
+                        <t t-if="ctx['record'].product_id">
+                        <li><strong><t t-out="ctx['record'].product_id.name"/></strong>,</li>
+                        </t>
+                    </ul>
+                    <br />
+                    Do not hesitate to contact us if you have any questions.
+                    <br /><br />
+                    Best Regards,
+                    <br />
+                    <t t-out="ctx['record'].issue_id.user_id.company_id.name"/>
+                </p>
+            </div>
+        </field>
+    </record>
+    <!-- Email template for Membership expire reminder -->
+    <record id="email_template_for_membership_expire_reminder" model="mail.template">
+        <field name="name">Membership Expire Reminder</field>
+        <field name="email_from">{{ctx.get('email_from') or ''}}</field>
+        <field name="subject">Renew Library Membership.</field>
+        <field name="email_to">{{ctx.get('email_to')}}</field>
+        <field name="model_id" ref="library_management_system.model_res_partner" />
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Dear,<t t-out="ctx['record'].name"/>
+                    <br /><br />
+                    Expire date of your <strong><t t-out="ctx['record'].name"/></strong> is <strong><t t-out="ctx['record'].end_date"/></strong>.
+                    <br />
+                    Please <strong>Renew</strong> your membership to continue our library services.
+                    <br /><br />
+                    Do not hesitate to contact us if you have any questions.
+                    <br />
+                    Best Regards,
+                    <br />
+                    <t t-out="ctx['company_id'].name"/>
+                </p>
+            </div>
+        </field>
+    </record>
+    <!-- Book Issue Request Approve -->
+    <record id="email_template_for_approve_request" model="mail.template">
+        <field name="name">Book Issue Request Approve</field>
+        <field name="email_from">{{ctx.get('email_from') or ''}}</field>
+        <field name="subject">Approve (Book Issue Request)</field>
+        <field name="email_to">{{ctx.get('email_to')}}</field>
+        <field name="model_id" ref="library_management_system.model_book_request" />
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Dear, <t t-out="ctx['partner_name']"/>
+                    <br /><br />
+                    Your Book Request for <strong><t t-out="ctx['book_name']"/></strong> has been <strong>Approved</strong>.
+                    <br />
+                    You can collect it form <t t-out="ctx['company_id'].name"/> Library within <strong><t t-out="ctx['company_id'].request_period_limit"/> Days</strong>.
+                    <br />
+                    Otherwise, it will automatically Reject.
+                    <br /><br />
+                    Do not hesitate to contact us if you have any questions.
+                    <br />
+                    Best Regards,
+                    <br />
+                    <t t-out="ctx['company_id'].name"/>
+                </p>
+            </div>
+        </field>
+    </record>
+    <!-- Book Issue Request Rejected -->
+    <record id="email_template_for_request_rejection" model="mail.template">
+        <field name="name">Book Issue Request Rejected</field>
+        <field name="email_from">{{ctx.get('email_from') or ''}}</field>
+        <field name="subject">Rejected (Book Issue Request)</field>
+        <field name="email_to">{{ctx.get('email_to')}}</field>
+        <field name="model_id" ref="library_management_system.model_book_request_rejected" />
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Dear,<t t-out="ctx['partner_name']"/>
+                    <br /><br />
+                    Your Book Request for <strong><t t-out="ctx['book_name']"/></strong> has been <strong>Rejected</strong>.
+                    <br />
+                    because of <t t-out="ctx['reason']"/>.
+                    <br /><br />
+                    Do not hesitate to contact us if you have any questions.
+                    <br />
+                    Best Regards,
+                    <br />
+                    <t t-out="ctx['company_id'].name"/>
+                </p>
+            </div>
+        </field>
+    </record>
+    <!-- return book -->
+    <record id="email_template_for_return_books" model="mail.template">
+        <field name="name">return.book</field>
+        <field name="email_from">{{ctx.get('email_from') or ''}}</field>
+        <field name="subject">Books Return</field>
+        <field name="email_to">{{ctx.get('email_to')}}</field>
+        <field name="model_id" ref="library_management_system.model_return_book" />
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Dear<t t-out="ctx['partner_name']"/>,
+                    <br />
+                    <br/>
+                    Thanks for returning <strong>
+                    <t t-foreach="ctx['book_name']" t-as="lead">
+                        <t t-out="lead"/>
+                    </t>
+                    </strong>,Please visit again.
+                    <br />
+                    Thank you for visiting the library.
+                    <br /><br />
+                    Best Regards,
+                    <br />
+                    <t t-out="ctx['company_id']"/>
+                </p>
+            </div>
+        </field>
+    </record>
+    <!-- issue book request -->
+    <record id="email_template_for_issue_book_request" model="mail.template">
+        <field name="name">Book Issue Request</field>
+        <field name="email_from">{{ctx.get('email_from') or ''}}</field>
+        <field name="subject">Book Issue Request</field>
+        <field name="email_to">{{ctx.get('email_to')}}</field>
+        <field name="model_id" ref="library_management_system.model_book_request" />
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Dear Librarian,
+                    <br /><br />
+                    I am writing this letter with a sincere request to allow me to issue <b><t t-out="ctx['book_name']"/></b> book from the library.
+                    <br /><br />
+                    My Request number is : <t t-out="ctx['request_number']"/>.
+                    <br /><br />
+                    Thank You.
+                    <br /><br />
+                    Best Regards,
+                    <br />
+                    <t t-out="ctx['name']"/>
+                </p>
+            </div>
+        </field>
+    </record>
+    <!-- reserve book -->
+    <record id="email_template_for_reserve_book" model="mail.template">
+        <field name="name">Reserve Book</field>
+        <field name="email_from">{{ctx.get('email_from') or ''}}</field>
+        <field name="subject">Reserve Book : {{ctx['request_number']}}</field>
+        <field name="email_to">{{ctx.get('email_to')}}</field>
+        <field name="model_id" ref="library_management_system.model_book_reservation" />
+        <field name="body_html" type="html">
+            <div style="margin: 0px; padding: 0px;">
+                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                    Dear Librarian,
+                    <br /><br />
+                    I would like to reserve <b><t t-out="ctx['book_name']"/></b> book from the library.
+                    <br /><br />
+                    My Request number is : <t t-out="ctx['request_number']"/>.
+                    <br /><br />
+                    Thank You.
+                    <br /><br />
+                    Best Regards,
+                    <br />
+                    <t t-out="ctx['name']"/>
+                </p>
+            </div>
+        </field>
+    </record>
+</odoo>

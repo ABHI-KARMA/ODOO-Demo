@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="book_issue_form" model="ir.ui.view">
+        <field name="name">Book Issue Form</field>
+        <field name="model">book.issue</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft" />
+                    <button name="action_confirm" string="Confirm" states="draft" class="oe_highlight" type="object" />
+                    <button name="action_cancel" string="Cancel" states="draft" type="object" />
+                    <button name="action_return" string="Return" states="issued" class="oe_highlight" type="object" />
+                    <button name="action_reissue" string="Re-Issue" states="issued" class="oe_highlight" type="object" attrs="{'invisible':['|',('is_return_today','=',False),('state','=','return')]}" />
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="get_payment_id" type="object" class="oe_stat_button" icon="fa-solid fa-money-bill" attrs="{'invisible':[('is_paid','=',False)]}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Return Charges</span>
+                            </div>
+                        </button>
+                        <button name="get_picking_ids" type="object" class="oe_stat_button" icon="fa-solid fa-book" attrs="{'invisible':[('picking_count','=',0)]}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Book Moves</span>
+                                <field name="picking_count" />
+                            </div>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="partner_id" attrs="{'readonly':[('state','=','issued')]}" options="{'no_create': True}" />
+                            <field name="membership_id" readonly="1" />
+                            <field name="membership_exp_date" readonly="1" />
+                        </group>
+                        <group>
+                            <field name="issue_date" attrs="{'readonly':[('state','=','issued')]}" />
+                            <field name="return_date" attrs="{'readonly':[('state','=','issued')]}" invisible="1" />
+                            <field name="user_id" attrs="{'readonly':[('state','=','issued')]}" />
+                            <field name="picking_type_id" attrs="{'readonly':[('state','=','issued')]}" />
+                            <field name="is_return_today" invisible="1" />
+                            <field name="is_paid" invisible="1" />
+                            <field name="book_request_origin" string="Source Location" attrs="{'invisible':[('book_request_origin','=',False)]}" />
+                            <field name="book_reservation_origin" string="Source Location" attrs="{'invisible':[('book_reservation_origin','=',False)]}" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Book Lines">
+                            <field name="book_line_ids" attrs="{'readonly':[('state','!=','draft')]}">
+                                <tree editable="bottom">
+                                    <field name="product_id" string="Book"/>
+                                    <field name="book_title" />
+                                    <field name="author_ids" widget="many2many_tags" />
+                                    <field name="isbn_13" />
+                                    <field name="return_date" />
+                                    <field name="available_quantity" />
+                                    <field name="quantity" />
+                                    <field name="state" string="Status" readonly="1" />
+                                    <field name="issue_date" invisible="1" />
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Search view -->
+    <record id="book_issue_search" model="ir.ui.view">
+        <field name="name">book.issue.search</field>
+        <field name="model">book.issue</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="partner_id" />
+                <filter string="member" name="partner_id" context="{'group_by':'partner_id'}" />
+                <filter string="membership" name="membership_id" context="{'group_by':'membership_id'}" />
+                <filter string="Issue Date" name="issue_date" date="create_date" />
+                <filter string="Status" name="state" context="{'group_by':'state'}" />
+            </search>
+        </field>
+    </record>
+    <!-- Tree View -->
+    <record id="book_issue_tree" model="ir.ui.view">
+        <field name="name">Book Issue Tree</field>
+        <field name="model">book.issue</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="membership_id" />
+                <field name="issue_date" />
+                <field name="state" widget="badge" decoration-success="state == 'issued'" decoration-bf="state == 'draft'" decoration-warning="state == 'reissued'" decoration-info="state == 'return'" decoration-danger="state == 'cancel'" />
+            </tree>
+        </field>
+    </record>
+    <!-- Kanban view  -->
+    <record id="book_issue_kanban" model="ir.ui.view">
+        <field name="name">book.issue.kanban</field>
+        <field name="model">book.issue</field>
+        <field name="arch" type="xml">
+            <kanban class="o_hr_employee_kanban">
+                <field name="name" />
+                <field name='name' />
+                <field name='partner_id' />
+                <field name='id' />
+                <field name="membership_id" />
+                <field name="issue_date" />
+                <field name="return_date" />
+                <field name="state" widget="badge" decoration-success="state == 'issued'" decoration-bf="state == 'draft'" decoration-warning="state == 'reissued'" decoration-info="state == 'return'" decoration-danger="state == 'cancel'" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details" style="display:flex; justify-content:space-between;">
+                                <div>
+                                    <h1 class="o_kanban_record_title">
+                                        <field name="name" />
+                                    </h1>
+                                    <div><strong>Member: </strong><span>
+                                            <field name="partner_id" /></span></div>
+                                    <div><strong>Membership: </strong><span>
+                                            <field name="membership_id" /></span></div>
+                                    <div><strong>Issue Date:</strong>
+                                        <field name="issue_date" />
+                                    </div>
+                                </div>
+                                    <div>
+                                        <field name="state" widget="label_selection" options="{'classes': {'draft': 'default', 'issued': 'success','reissued':'info','return':'warning','cancel':'danger'}}"/>
+                                    </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <!-- Calendar view -->
+    <record id="book_issue_calendar" model="ir.ui.view">
+        <field name="name">book.issue.calendar</field>
+        <field name="model">book.issue</field>
+        <field name="arch" type="xml">
+            <calendar string="Book Issue" date_start="issue_date" date_stop="return_date" event_open_popup="true" mode="month" quick_add="False">
+                <field name="name" />
+            </calendar>
+        </field>
+    </record>
+    <!-- Pivot view -->
+    <record id="book_issue_pivot" model="ir.ui.view">
+        <field name="name">book.issue.pivot</field>
+        <field name="model">book.issue</field>
+        <field name="arch" type="xml">
+            <pivot string="Pivot View">
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="membership_id" />
+                <field name="issue_date" />
+                <field name="return_date" />
+            </pivot>
+        </field>
+    </record>
+    <record id="book_issue_action" model="ir.actions.act_window">
+        <field name="name">Book Issue</field>
+        <field name="res_model">book.issue</field>
+        <field name="view_mode">kanban,tree,pivot,calendar,form,search</field>
+    </record>
+</odoo>

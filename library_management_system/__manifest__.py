@@ -1,0 +1,52 @@
+# -*- coding: utf-8 -*-
+# Powered by Kanak Infosystems LLP.
+# © 2020 Kanak Infosystems LLP. (<https://www.kanakinfosystems.com>).
+
+{
+    'name': 'Library Management',
+    'version': '14.0.1.0',
+    'summary': '',
+    'description': """This module will help in managing library's day to day works.""",
+    'license': 'OPL-1',
+    'author': 'Kanak Infosystems LLP.',
+    'support': 'info@kanakinfosystems.com',
+    'depends': [
+        'base',
+        'stock',
+        'account',
+        'website',
+        'website_sale',
+    ],
+    'data': [
+        'security/security.xml',
+        "security/ir.model.access.csv",
+        'data/record_sequence.xml',
+        'data/reminder_crons.xml',
+        'data/reminder_mail_template.xml',
+        # 'data/data_mail.xml',
+        'data/product_demo_data.xml',
+        'views/library_book_request_view.xml',
+        'wizard/library_add_book_view.xml',
+        'views/library_product_template_view.xml',
+        'views/library_book_author_publisher_view.xml',
+        'views/library_book_category_view.xml',
+        'wizard/library_return_reissue_view.xml',
+        'views/library_book_issue_views.xml',
+        'views/library_membership_views.xml',
+        'views/library_res_config_settings.xml',
+        'views/library_res_partner_views.xml',
+        'views/library_book_reservation_view.xml',
+        'views/library_student_operations.xml',
+        'views/s_products_searchbar.xml',
+        'reports/library_membership_report_view.xml',
+        'reports/library_book_report_view.xml',
+        'reports/library_book_report_template.xml',
+        'views/menu_items.xml',
+    ],
+    'external_dependencies': {
+        'python': ['isbntools'],
+    },
+    'installable': True,
+    'images': [],
+    'application': True,
+}

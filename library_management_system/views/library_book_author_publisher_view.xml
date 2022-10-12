@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="book_author_form_view" model="ir.ui.view">
+        <field name="name">Book Author Form</field>
+        <field name="model">book.author</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title" style="display:inline-flex; align-items:end;">
+                        <field name="author_image" widget="image" class="oe_avatar" />
+                        <h1 style="margin-left:60px">
+                            <field name="name" default_focus="1" placeholder="Name" required="1" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="gender" />
+                            <field name="language_id" />
+                        </group>
+                        <group>
+                            <field name="country_id" />
+                            <field name="born" />
+                            <field name="died" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="book_author_tree_view" model="ir.ui.view">
+        <field name="name">Book Author Tree</field>
+        <field name="model">book.author</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="country_id" />
+                <field name="language_id" />
+            </tree>
+        </field>
+    </record>
+    <record id="book_author_kanban_view" model="ir.ui.view">
+        <field name="name">Book Author Kanban</field>
+        <field name="model">book.author</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="author_image" />
+                <field name="name" />
+                <field name="country_id" />
+                <field name="language_id" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click">
+                            <div class="row">
+                                <div class="col-10">
+                                    <strong>
+                                        <th>Pipeline Id: </th>
+                                    </strong>
+                                    <field name="name"></field>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-10">
+                                    <strong>
+                                        <th>Product: </th>
+                                    </strong>
+                                    <field name="country_id" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-10">
+                                    <strong>
+                                        <th>Job Order: </th>
+                                    </strong>
+                                    <field name="language_id" />
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="book_author_action" model="ir.actions.act_window">
+        <field name="name">Authors</field>
+        <field name="res_model">book.author</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <record id="book_publisher_form_view" model="ir.ui.view">
+        <field name="name">Book Publisher Form</field>
+        <field name="model">book.publisher</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title" style="display:inline-flex; align-items:end;">
+                        <field name="publisher_image" widget="image" class="oe_avatar" />
+                        <h1 style="margin-left:60px">
+                            <field name="name" default_focus="1" placeholder="Name" required="1" />
+                        </h1>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="book_publisher_tree_view" model="ir.ui.view">
+        <field name="name">Book Publisher Tree</field>
+        <field name="model">book.publisher</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+            </tree>
+        </field>
+    </record>
+    <record id="book_publisher_action" model="ir.actions.act_window">
+        <field name="name">Publishers</field>
+        <field name="res_model">book.publisher</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

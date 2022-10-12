@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding='UTF-8'?>
+<odoo>
+    <record id='settings_config' model='ir.ui.view'>
+        <field name='name'>settings config</field>
+        <field name='model'>res.config.settings</field>
+        <field name="priority" eval="60" />
+        <field name="inherit_id" ref="base.res_config_settings_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Library" string="Library" data-key="add_fields_in_settings_config">
+                    <h2>General Settings</h2>
+                    <div class="row mt16 o_settings_container" name="general_setting_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <group>
+                                <field name='due_amount' string="Due Date Exceed Amount" />
+                                <div class="text-muted">
+                                    Set the return date exceed amount.
+                                </div>
+                            </group>
+                            <group>
+                                <field name="return_days" />
+                                <div class="text-muted">
+                                    Fixed the return days
+                                </div>
+                            </group>
+                            <group>
+                                <field name='request_period_limit' />
+                            </group>
+                        </div>
+                    </div>
+                    <h2>Membership</h2>
+                    <div class="row mt16 o_settings_container" name="membership_setting_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <group>
+                                <field name='paid_membership' />
+                            </group>
+                            <group attrs="{'invisible':[('paid_membership','=',False)]}">
+                                <div class="text-muted">
+                                    Set the price of membership period
+                                </div>
+                                <field name='monthly_price' string="Monthly Price" />
+                                <field name='quarterly_price' string="Quarterly Price" />
+                                <field name='half_yearly_price' string="Half Yearly Price" />
+                                <field name='yearly_price' string="Yearly Price" />
+                            </group>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <record id="action_library_config" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'library_management_system', 'bin_size': False}</field>
+    </record>
+    <record id="res_company_inherit_form_view" model="ir.ui.view">
+        <field name="name">res.company.inherit.form</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="due_amount_company" invisible="1" />
+                <field name="return_days_company" invisible="1" />
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="book_request_form" model="ir.ui.view">
+        <field name="name">book.request.form.view</field>
+        <field name="model">book.request</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_approve" string="Approve" type="object" class="oe_highlight" attrs="{'invisible':[('state','!=','sent')]}" groups="library_management_system.group_library_librarian" />
+                    <button name="action_reject" string="Reject" class="oe_highlight" type="object" attrs="{'invisible':[('state','!=','sent')]}" groups="library_management_system.group_library_librarian" />
+                    <button name="action_issue" string="Confirm Issue" type="object" class="oe_highlight" attrs="{'invisible':[('state','!=','approved')]}" groups="library_management_system.group_library_librarian" />
+                    <field name="state" widget="statusbar" statusbar_visible='sent,approved,done' />
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="partner_id" attrs="{'readonly':[('state','!=','sent')]}" options="{'no_create': True}" />
+                            <field name="email" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="date" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="issue_id" readonly="1" attrs="{'invisible':[('state','!=','done')]}" />
+                        </group>
+                        <group>
+                            <field name="company_id" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="membership_id" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="membership_exp_date" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="user_id" invisible="1" />
+                            <field name="product_id" attrs="{'readonly':[('state','!=','sent')]}" />
+                            <field name="picking_type_id" states='approved' string="Picking Type"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="reason" string="Rejection Reason" placeholder="Reason For Rejection" states="rejected" />
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="book_request_tree" model="ir.ui.view">
+        <field name="name">book.request.tree.view</field>
+        <field name="model">book.request</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="date" />
+                <field name="membership_id" />
+                <field name="product_id" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+    <!-- Search view -->
+    <record id="book_request_search" model="ir.ui.view">
+        <field name="name">book.request.search</field>
+        <field name="model">book.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="product_id" />
+                <filter string="member" name="partner_id" context="{'group_by':'partner_id'}" />
+                <filter string="membership" name="membership_id" context="{'group_by':'membership_id'}" />
+                <filter string="Status" name="state" context="{'group_by':'state'}" />
+                <filter string="Issue Date" name="issue_date" date="create_date" />
+            </search>
+        </field>
+    </record>
+    <!-- Kanban view  -->
+    <record id="book_request_kanban" model="ir.ui.view">
+        <field name="name">book.request.kanban</field>
+        <field name="model">book.request</field>
+        <field name="arch" type="xml">
+            <kanban class="o_hr_employee_kanban">
+                <field name="name" />
+                <field name='name' />
+                <field name='partner_id' />
+                <field name='id' />
+                <field name="email" />
+                <field name="membership_exp_date" />
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_details" style="display:flex; top:0; right:0;">
+                                <div>
+                                    <h1 class="o_kanban_record_title">
+                                        <field name="name" />
+                                    </h1>
+                                    <div><strong>Member: </strong><span>
+                                            <field name="partner_id" /></span></div>
+                                    <div><strong>Membership: </strong><span>
+                                            <field name="membership_id" /></span></div>
+                                    <div><strong>Membership Exp Date:
+                                        </strong>
+                                        <field name="membership_exp_date" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <field name="state" widget="label_selection" options="{'classes': {'sent': 'default', 'approved': 'success','confirm':'info','done':'warning','rejected':'danger'}}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <!-- Calendar view -->
+    <record id="book_request_calendar" model="ir.ui.view">
+        <field name="name">book.request.calendar</field>
+        <field name="model">book.request</field>
+        <field name="arch" type="xml">
+            <calendar string="Book Request" date_start="date" date_stop="membership_exp_date" event_open_popup="true" mode="month" quick_add="False">
+                <field name="name" />
+            </calendar>
+        </field>
+    </record>
+    <!-- Pivot view -->
+    <record id="book_request_pivot" model="ir.ui.view">
+        <field name="name">book.request.pivot</field>
+        <field name="model">book.request</field>
+        <field name="arch" type="xml">
+            <pivot string="Pivot View">
+                <field name="name" />
+                <field name="partner_id" />
+                <field name="membership_id" />
+                <field name="date" />
+                <field name="membership_exp_date" />
+            </pivot>
+        </field>
+    </record>
+    <record id="book_request_action" model="ir.actions.act_window">
+        <field name="name">Book Requests</field>
+        <field name="res_model">book.request</field>
+        <field name="view_mode">kanban,tree,pivot,calendar,form,search</field>
+    </record>
+    <record id="reject_wizard_form" model="ir.ui.view">
+        <field name="name">book.request.rejected.form</field>
+        <field name="model">book.request.rejected</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="reason_for_rejection" />
+                    <footer>
+                        <button name="action_confirm" string="Confirm" class="oe_highlight" type="object" />
+                        <button special="cancel" string="Cancel" />
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

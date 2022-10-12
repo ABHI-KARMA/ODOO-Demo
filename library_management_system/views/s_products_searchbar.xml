@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="library_management_products" name="Products">
+        <t t-call="website.layout">
+            <t t-set="additional_title">Library</t>
+            <div id="wrap" class="js_sale">
+                <div class="oe_structure oe_empty" id="oe_structure_website_sale_products_1" />
+                <div class="container oe_website_sale">
+                    <div class="products_pager form-inline flex-md-nowrap justify-content-between justify-content-md-center">
+                        <t t-call="website_sale.search">
+                            <t t-set="_classes" t-valuef="w-100 w-md-auto mt-2" />
+                        </t>
+                        <t t-call="website.pager">
+                            <t t-set="_classes" t-valuef="mt-2 ml-md-2" />
+                        </t>
+                    </div>
+                    <div class="row o_wsale_products_main_row">
+                        <div t-if="enable_left_column" id="products_grid_before" class="col-lg-3" />
+                        <div id="products_grid" t-attf-class="col #{'o_wsale_layout_list' if layout_mode == 'list' else ''}">
+                            <t t-if="category">
+                                <t t-set='editor_msg'>Drag building blocks here to customize the header for "
+                                    <t t-esc='category.name' />" category.</t>
+                                <div class="mb16" id="category_header" t-att-data-editor-message="editor_msg" t-field="category.website_description" />
+                            </t>
+                            <div t-if="bins" class="o_wsale_products_grid_table_wrapper">
+                                <table class="table table-borderless m-0" t-att-data-ppg="ppg" t-att-data-ppr="ppr">
+                                    <colgroup t-ignore="true">
+                                        <!-- Force the number of columns (useful when only one row of (x < ppr) products) -->
+                                        <col t-foreach="ppr" t-as="p" />
+                                    </colgroup>
+                                    <tbody>
+                                        <tr t-foreach="bins" t-as="tr_product">
+                                            <t t-foreach="tr_product" t-as="td_product">
+                                                <t t-if="td_product">
+                                                    <t t-set="product" t-value="td_product['product']" />
+                                                    <!-- We use t-attf-class here to allow easier customization -->
+                                                    <td t-att-colspan="td_product['x'] != 1 and td_product['x']" t-att-rowspan="td_product['y'] != 1 and td_product['y']" t-attf-class="oe_product" t-att-data-ribbon-id="td_product['ribbon'].id">
+                                                        <div t-attf-class="o_wsale_product_grid_wrapper o_wsale_product_grid_wrapper_#{td_product['x']}_#{td_product['y']}">
+                                                            <t t-call="library_management_system.products_details">
+                                                                <t t-set="product_image_big" t-value="td_product['x'] + td_product['y'] &gt; 2" />
+                                                                <t t-if="product.qty_available != 0.0">
+                                                                    <h1>Available</h1>
+                                                                </t>
+                                                                <t t-else="">
+                                                                    <h2>not Available</h2>
+                                                                </t>
+                                                            </t>
+                                                        </div>
+                                                    </td>
+                                                </t>
+                                                <td t-else="" />
+                                            </t>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <t t-else="">
+                                <div class="text-center text-muted">
+                                    <t t-if="not search">
+                                        <h3 class="mt8">No product defined</h3>
+                                        <p t-if="category">No product defined in category "<strong t-esc="category.display_name" />".</p>
+                                    </t>
+                                    <t t-else="">
+                                        <h3 class="mt8">No results</h3>
+                                        <p>No results for "<strong t-esc='search' />"<t t-if="category"> in category "<strong t-esc="category.display_name" />"</t>.</p>
+                                    </t>
+                                    <p t-ignore="true" groups="sales_team.group_sale_manager">Click <i>'New'</i> in the top-right corner to create your first product.</p>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                    <div class="products_pager form-inline justify-content-center py-3">
+                        <t t-call="website.pager" />
+                    </div>
+                </div>
+                <div class="oe_structure oe_empty" id="oe_structure_website_sale_products_2" />
+            </div>
+        </t>
+    </template>
+    <record id="contact_page" model="website.page">
+        <field name="url">/library</field>
+        <field name="is_published">True</field>
+        <field name="view_id" ref="library_management_system.library_management_products" />
+        <field name="cache_time">0</field>
+        <field name="track">True</field>
+    </record>
+    <record id="menu_contact_form" model="website.menu">
+        <field name="name">Library</field>
+        <field name="url">/library</field>
+        <field name="page_id" ref="library_management_system.contact_page" />
+        <field name="parent_id" ref="website.main_menu" />
+        <field name="sequence" type="int">20</field>
+    </record>
+    <template id="library_management_product" name="Product" track="1">
+        <t t-set="combination" t-value="product._get_first_possible_combination()" />
+        <t t-set="combination_info" t-value="product._get_combination_info(combination, add_qty=add_qty or 1, pricelist=pricelist)" />
+        <t t-set="product_variant" t-value="product.env['product.product'].browse(combination_info['product_id'])" />
+        <t t-call="website.layout">
+            <t t-set="additional_title" t-value="product.name" />
+            <div itemscope="itemscope" itemtype="http://schema.org/Product" id="wrap" class="js_sale">
+                <section t-attf-class="container py-2 oe_website_sale #{'discount' if combination_info['has_discounted_price'] else ''}" id="product_detail" t-att-data-view-track="view_track and '1' or '0'">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item">
+                                    <a t-att-href="keep(category=0)">Books</a>
+                                </li>
+                                <li t-if="category" class="breadcrumb-item">
+                                    <a t-att-href="keep('/library/category/%s' % slug(category), category=0)" t-field="category.name" />
+                                </li>
+                                <li class="breadcrumb-item active">
+                                    <span t-field="product.name" />
+                                </li>
+                            </ol>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-xl-8">
+                            <t t-call="website_sale.shop_product_carousel" />
+                        </div>
+                        <div class="col-md-6 col-xl-4" id="product_details">
+                            <h1 itemprop="name" t-field="product.name">Product Name</h1>
+                            <span itemprop="url" style="display:none;" t-esc="product.website_url" />
+                            <t t-if="product.publisher_info">
+                                <span>Publisher Info :
+                                    <t t-esc="product.publisher_info" /></span>
+                            </t>
+                            <br />
+                            <t t-foreach="product.author_ids" t-as="author">
+                                <span>Authors :
+                                    <t t-esc="author.name" />
+                                </span>
+                            </t>
+                            <div>
+                                <t t-if="product.qty_available != 0">
+                                    <form action="/request_book" method="POST">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                        <input type="hidden" name="cid" t-att-value="product.id" />
+                                        <button type="submit" style="border:1px solid; background:aliceblue; padding:4px; border-radius:7px; font-size:14px; color:cadetblue; width:150px;">Issue Request</button>
+                                    </form>
+                                </t>
+                                <t t-elif="product.qty_available == 0.0">
+                                    <form action="/reserve_book" method="POST">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                        <input type="hidden" name="cid" t-att-value="product.id" />
+                                        <button type="submit" style="border:1px solid; background:aliceblue; padding:4px; border-radius:7px; font-size:14px; color:red; width:150px;">Reserve Book</button>
+                                    </form>
+                                </t>
+                                <t t-else="">
+                                    <div style="border:1px solid; background:aliceblue; border-radius:7px; font-size:14px; color:#e95225; width:150px; text-align:center;">
+                                        <h6>Not Available</h6>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <div itemprop="description" t-field="product.website_description" class="oe_structure oe_empty mt16" id="product_full_description" />
+            </div>
+        </t>
+    </template>
+    <!-- Book Issue Request -->
+    <template id="book_issue_request_form" name="Contact Update">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                    <div class="col-md-12">
+                        <form action="/request_book" method="POST">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" name="id" id="update_name" t-att-value="data.id" required="true" />
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Name:</label>
+                                <input type="text" class="form-control" name="student_name" id="update_name" t-att-value="partner" required="true" readonly='true' />
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email address:</label>
+                                <input type="email" class="form-control" name="email" id="update_email" t-att-value="email" required="true" />
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Book Name</label>
+                                <input type="text" class="form-control" name="book_name" t-att-value="data.name" required="true" readonly='true' />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="book_issue_reservation_form" name="Contact Update">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container">
+                    <div class="col-md-12">
+                        <form action="/reserve_book" method="POST">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                            <div class="form-group">
+                                <input type="hidden" class="form-control" name="id" id="update_name" t-att-value="data.id" required="true" />
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Name:</label>
+                                <input type="text" class="form-control" name="student_name" t-att-value="partner" id="update_name" required="true" readonly='true' />
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email address:</label>
+                                <input type="email" class="form-control" name="email" id="update_email" t-att-value="email" required="true" />
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Book Name</label>
+                                <input type="text" class="form-control" name="book_name" t-att-value="data.name" required="true" readonly='true' />
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <template id="products_details" name="Products item">
+        <t t-set="product_href" t-value="keep(product.website_url, page=(pager['page']['num'] if pager['page']['num']&gt;1 else None))" />
+        <t t-set="combination_info" t-value="product._get_combination_info(only_template=True, add_qty=add_qty or 1, pricelist=pricelist)" />
+        <form action="/shop/cart/update" method="post" class="card oe_product_cart" t-att-data-publish="product.website_published and 'on' or 'off'" itemscope="itemscope" itemtype="http://schema.org/Product">
+            <div class="card-body p-1 oe_product_image">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                <a t-att-href="product_href" class="d-block h-100" itemprop="url">
+                    <t t-set="image_holder" t-value="product._get_image_holder()" />
+                    <span t-field="image_holder.image_1920" t-options="{'widget': 'image', 'preview_image': 'image_1024' if product_image_big else 'image_256', 'itemprop': 'image'}" class="d-flex h-100 justify-content-center align-items-center" />
+                </a>
+            </div>
+            <div class="card-body p-0 text-center o_wsale_product_information">
+                <div class="p-2 o_wsale_product_information_text">
+                    <h6 class="o_wsale_products_item_title">
+                        <a itemprop="name" t-att-href="product_href" t-att-content="product.name" t-field="product.name" />
+                        <t t-if="product.qty_available == 0.0">
+                            <h6 style="border:1px solid #f10606; background:#ffe6d1; width:50%; margin-left:25%;">Not Available</h6>
+                        </t>
+                        <t t-else="">
+                            <h6 style="border:1px solid greenyellow; background:#cbfbcb; width:50%; margin-left:25%;">Available</h6>
+                        </t>
+                    </h6>
+                </div>
+                <div class="o_wsale_product_btn" />
+            </div>
+            <t t-set="bg_color" t-value="td_product['ribbon']['bg_color'] or ''" />
+            <t t-set="text_color" t-value="td_product['ribbon']['text_color']" />
+            <t t-set="bg_class" t-value="td_product['ribbon']['html_class']" />
+            <span t-attf-class="o_ribbon #{bg_class}" t-attf-style="#{text_color and ('color: %s; ' % text_color)}#{bg_color and 'background-color:' + bg_color}" t-raw="td_product['ribbon']['html'] or ''" />
+        </form>
+    </template>
+    <template id="product_sort" inherit_id="library_management_system.library_management_products" customize_show="True" name="Show Sort by Book">
+        <xpath expr="//div[hasclass('products_pager')]/t[@t-call][last()]" position="after">
+            <t t-set="list_available">Available</t>
+            <t t-set="list_not_available">Not Available</t>
+            <t t-set="website_sale_sortable" t-value="[
+                (list_available, 'available'),
+                (list_not_available, 'not_available'),
+            ]" />
+            <t t-set="website_sale_sortable_current" t-value="[sort for sort in website_sale_sortable if sort[1]==request.params.get('order', '')]" />
+            <div class="dropdown mt-2 ml-md-2 dropdown_sorty_by">
+                <a role="button" href="#" class="dropdown-toggle btn btn-secondary" data-toggle="dropdown">
+                    <span class="d-none d-lg-inline">
+                        <t t-if='len(website_sale_sortable_current)'>
+                            Sort by :
+                            <t t-raw='website_sale_sortable_current[0][0]' />
+                        </t>
+                        <t t-else='1'>
+                            Sort by
+                        </t>
+                    </span>
+                    <i class="fa fa-sort-amount-asc d-lg-none" />
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" role="menu">
+                    <t t-foreach="website_sale_sortable" t-as="sortby">
+                        <a role="menuitem" rel="noindex,nofollow" t-att-href="keep('/library', order=sortby[1])" class="dropdown-item">
+                            <span t-raw="sortby[0]" />
+                        </a>
+                    </t>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
